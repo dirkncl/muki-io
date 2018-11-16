@@ -1,0 +1,645 @@
+<!doctype html>
+<html xml:lang="en" lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>muki &#8213; (re)discovering video game music</title>
+  <meta name="description" content="Muki is an online music player for MIDI, VGM and other sequenced formats. It also contains a huge selection of hand-picked songs from video games of the 90's.">
+  <meta name="author" content="Tomás Pollak">
+  <meta name="viewport" content="width=device-width,maximum-scale=1,initial-scale=1">
+
+  <!--[if lt IE 9]><script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <link rel="search" type="application/opensearchdescription+xml" title="Muki" href="./search.xml" />
+  <link rel="alternative" type="application/json+oembed" href="./oembed">
+  <link rel="shortcut icon" href="./img/favicon.ico" type="image/x-icon" />
+
+  <link href='https://fonts.googleapis.com/css?family=Exo:300,400,500,700,700italic,500italic,300italic,400italic' rel='stylesheet' type='text/css'>
+   
+  <link href="./assets/all.css" rel="stylesheet" type="text/css" />
+  <script src="assets/jquery.js"></script>
+  <script src="assets/movableElement.js"></script>
+  <script type="text/javascript" src="assets/main.js"></script>
+  <script type="text/javascript" src="assets/backend.js"></script>
+  <script type="text/javascript" src="assets/nanoScroller.js"></script>
+  <script type="text/javascript" src="./pat/loader.js"></script>
+  <script src="assets/showhideDIV.js"></script>
+  <script src="assets/midiFileEvent.js"></script>
+  <script src="assets/zlib.js"></script>
+  <script src="assets/vivus.js"></script>
+  <script src="assets/visual.js"></script>
+  <script src="assets/MIDILyricsDisplayer.js"></script>
+
+</head>
+
+<body>
+
+<header class="cd-header">
+
+  <a href="#nav" class="cd-3d-nav-trigger" style="display: none">
+    Menu
+    <span></span>
+  </a>
+</header>
+
+<nav class="cd-3d-nav-container">
+
+  <ul id="nav" class="cd-3d-nav">
+
+    <li id="list-menu">
+      <div class="cs-select">
+        <span class="cs-placeholder">playlists <em class="playing"></em></span>
+        <div class="playable cs-options">
+          <ul class="list">
+            <!--<li><a href="./list/all">all songs</a></li>-->
+            <li><a href="https://muki.io/list/recent">recently added</a></li>
+            <li><a href="https://muki.io/list/best">top rated this week</a></li>
+            <li><a href="https://muki.io/list/classics">the classics</a></li>
+            <li><a href="https://muki.io/list/unsung">the unsung</a></li>
+          </ul>
+        </div>
+      </div>
+    </li>
+
+    <li id="platform-menu">
+      <div class="cs-select">
+        <span class="cs-placeholder">platform <em class="playing"></em></span>
+        <div class="playable cs-options">
+          <ul class="list">
+            <li><a href="https://muki.io/platform/amiga">amiga</a></li>
+            <li><a href="https://muki.io/platform/arcade">arcade</a></li>
+            <li><a href="https://muki.io/platform/dos">dos</a></li>
+            <li><a href="https://muki.io/platform/macintosh">macintosh</a></li>
+            <li><a href="https://muki.io/platform/nes">nes</a></li>
+            <li><a href="https://muki.io/platform/snes">snes</a></li>
+            <li><a href="https://muki.io/platform/sega">sega</a></li>
+            <li><a href="https://muki.io/platform/windows">windows</a></li>
+          </ul>
+        </div>
+      </div>
+    </li>
+
+    <li id="genre-menu">
+      <div class="cs-select">
+        <span class="cs-placeholder">genre <em class="playing"></em></span>
+        <div class="playable cs-options">
+          <ul class="list">
+            <li><a href="https://muki.io/genre/action:fighting">action &amp; tactical</a></li>
+            <li><a href="https://muki.io/genre/adventure">adventure &amp; puzzles</a></li>
+            <li><a href="https://muki.io/genre/rpg">RPGs &amp; crawlers</a></li>
+            <li><a href="https://muki.io/genre/platform">platformers</a></li>
+            <li><a href="https://muki.io/genre/shooter">shooters</a></li>
+            <li><a href="https://muki.io/genre/sports-racing">sports &amp; racing</a></li>
+            <li><a href="https://muki.io/genre/strategy">strategy / 4x</a></li>
+          </ul>
+        </div>
+      </div>
+    </li>
+
+    <li id="mood-menu">
+      <div class="cs-select">
+        <span class="cs-placeholder">mood <em class="playing"></em></span>
+        <div class="playable cs-options" id="mood-menu-options"></div>
+      </div>
+    </li>
+
+    <li id="more-menu">
+      <div class="cs-select">
+        <span class="cs-placeholder">more</span>
+        <div class="cs-options">
+          <ul class="list">
+            <li><a href="https://muki.io/search">search</a></li>
+            <li><a href="https://muki.io/pages/help">help &amp; faq</a></li>
+            <li><a href="https://muki.io/pages/settings">settings</a></li>
+            <li><a href="https://muki.io/pages/changelog">changelog</a></li>
+            <li><a href="https://muki.io/pages/about">about the project</a></li>
+            <li><a class="outbound-link" target="_blank" href="https://twitter.com/intent/tweet?original_referer=http%3A%2F%2Fmuki.io&ref_src=twsrc%5Etfw&text=Listen%20to%20old%20video%20game%20music%20with%20today%27s%20sound!&tw_p=tweetbutton&url=http%3A%2F%2Fmuki.io">tweet this</a></li>
+            <li><a class="outbound-link" target="_blank" href="https://twitter.com/mukisound">follow muki</a></li>
+            <li><a class="outbound-link" target="_blank" href="https://chrome.google.com/webstore/detail/muki-listen-to-midi-and-c/odkphkcpnepmknbkpelballffjpcjgbl">get the Chrome app</a></li>
+            <li><a href="https://muki.io/pages/feedback">send feedback</a></li>
+            <li><a href="https://muki.io/pages/bugs">report an issue</a></li>
+          </ul>
+        </div>
+      </div>
+    </li>
+  </ul>
+
+  <span class="cd-marker color-1"></span>
+</nav>
+
+  <div id="pane">
+    <div id="title"> 
+      <div id="titles"></div>
+    </div>
+    <center><div class="lyrics"></div></center>    
+    
+    <div id="ghostpane"></div>
+  </div>
+
+
+
+<div id="main">
+  <div style="position:absolute;width:100%;height:80px;z-index:999">
+  <button id="button" onclick="HideShow('player','b','Show Panel','Hide Panel')"><span id="b">[Hide Panel]</span></button>
+  <button id="lyricButton" onclick="HideShow('pane','b1','Show lyric','Hide lyric')"><span id="b1">[Hide lyric]</span></button>
+  <button id="button2" onclick="HideShow('viz','b2','Show Viz','Hide Viz')"><span id="b2">[Hide Viz]</span></button>
+  </div>
+
+  <img id="corner-logo" src="./img/logo-mini.png" alt="muki" />
+
+<div id="logo">
+  <div id="animation"></div>
+  <div id="real">
+    <img style="opacity:0" src="./img/muki-small-icon.svg" alt="muki" />
+    <big style="opacity:0">(re)discovering sequenced music</big>
+  </div>
+</div>
+
+<div id="over"><p>Drop your file to start playing.</p></div>
+<div id="viz" class="off"></div>
+<div id="intro"><div><p></p></div><a class="skip-intro" href="#">skip intro</a></div>
+
+<div id="search">
+  <form action="https://muki.io/search">
+    <input id="search-input" type="search" name="name" placeholder="Type the name of a game and hit enter" autocomplete="off" />
+    <label for="search-input">Examples: mario, sonic, monkey island, final fantasy, metal gear.</label>
+  </form>
+</div>
+
+<div class="container">
+
+  <div id="sidepane">
+    <div>
+      <ul id="songlist"></ul>
+    </div>
+  </div>
+
+  <div id="voteform" style="display:none">
+    <h3 id="vote-question">Like this song?</h3>
+
+    <div class="progress-button upvote">
+      <span class="icon-circle-check done"></span>
+      <span class="icon-circle-cross failed"></span>
+      <input id="submit" class="submit" type="button" value="Yay" />
+    </div>
+
+    <div class="progress-button downvote">
+      <span class="icon-circle-check done"></span>
+      <span class="icon-circle-cross failed"></span>
+      <input id="submit" class="submit" type="button" value="Nah" />
+    </div>
+  </div>
+
+  <div id="player" style="display:none">
+  <!--
+    <div id="notice"><p>
+      <a href="#" onclick="$('#notice').toggle(false); return false;" class="close-button">&times;</a>
+      <span id="notice-message">Tip: To view more info about a song or get a shareable link, click on its name.</span>
+      <span id="notice-message">Now playing: <strong>The unsung</strong></span>
+      </p></div>
+  -->
+
+    <div class="upper-section clearfix">
+
+      <div id="song-info">
+        <big id="song-album">Choose a playlist from the menu above!</big>
+        <big id="song-title"></big>
+        <small id="song-type" style="display: none"></small>
+      </div>
+
+      <div class="options">
+        <div class="volume-container">
+          <span class="icon icon-volume"></span>
+          <input id="volume" class="volume" type="range" min="0" max="100" value="100" step="1" />
+        </div>
+
+        <button title="Select midi Files">
+          <input id="IdInputFiles" multiple type="file" style="display:none">
+          <label for="IdInputFiles"><span class="icon icon-paper"></span></label>
+        </button>
+
+        <button title="Select midi Dir">
+          <input id="IdInputDirs" webkitdirectory multiple type="file" style="display:none">
+          <label for="IdInputDirs"><span class="icon icon-paper-stack"></span></label>
+        </button>
+        <button onclick="empty()" title="Clear Playlist">
+          <span class="icon-circle-cross"></span>
+        </button>
+
+        <button id="list-button" title="Toggle playlist">
+          <span class="icon-cog"></span>
+        </button>
+
+        <button id="repeat-button" title="Toggle repeat">
+          <span class="icon-repeat"></span>
+        </button>
+
+        <button onclick="shuffle()" title="Shuffle"><!--Shuffle-->
+          <span class="icon-shuffle"></span>
+        </button>
+
+        <button id="settings-button" title="Open settings panel">
+          <span class="icon-params"></span>
+        </button>
+      </div>
+
+    </div><!-- /upper -->
+
+    <div class="lower-section clearfix">
+
+      <div class="controls buttons">
+        <button id="prev-button" class="player-button leftmost" title="Previous song">
+          <span class="icon-skip-back"></span>
+        </button>
+        <button id="playPause-button" class="player-button" title="Play/pause song">
+          <span class="icon-play"></span>
+        </button>
+        <button id="next-button" class="rightmost player-button" title="Next song">
+          <span class="icon-skip-forward"></span>
+        </button>
+      </div>
+
+      <div class="right">
+        <div class="progress">
+          <span id="time1" class="time">0:00</span>
+          <span id="time2" class="time">-0:00</span>
+          <div id="capsule" class="led"><span id="cursor"></span></div>
+        </div>
+      </div>
+
+    </div><!-- /lower -->
+  </div><!-- /player -->
+
+</div><!-- container -->
+</div><!-- main -->
+
+<aside id="page-bugs" class="overlay top">
+  <div>
+    <a href="#close" class="close" title="Close">Close</a>
+    <div class="content">
+      <h2>Did hell break loose? Is Muki on the verge of collapse?</h2>
+      <p>Please send me <a href="https://muki.io/cdn-cgi/l/email-protection#6e1a01030f1d1e0102020f052e09030f0702400d0103511d1b0c040b0d1a53231b0507452b1c1c011c">an email</a> and tell me about it as soon as possible! Don't forget to include your OS and browser version, and the steps to replicate the issue, if applicable.</p>
+    </div>
+  </div>
+</aside>
+
+<aside id="page-changelog" class="overlay top">
+  <div>
+    <a href="#close" class="close" title="Close">Close</a>
+    <div class="content">
+    <h1>The Changelog</h1>
+
+    <h2>2016-03-30: MDX support</h2>
+    <p>Muki now handles MDX files thanks to the mdxmini library. This is an experimental feature, specially if the song requires a PDX file.</p>
+
+    <h2>2016-03-17: OPL3 MIDI backend, new visualizations, settings pane</h2>
+    <p>Added two WebGL-based visualizations, a new alternate GM MIDI backend based on the Adlmidi player, and a settings pane where you can manage these two settings.</p>
+
+    <h2>2015-11-17: Adplug core</h2>
+    <p>This new backend that can play songs written for Adlib and compatible soundcards (OPL-based). Some of the supported formats include: IMF, LAA, RAW, and DRO which is used by DOSBox for raw OPL dumps.</p>
+
+<!--
+    <h2>2015-05-24: Added MT-32 MIDI detection</h2>
+    <p>Using the contained sysex commands for this specific Roland synth.</p>
+-->
+
+    <h2>2015-05-23: Added MUS and XMI support</h2>
+    <p>Uses Wildmidi's parser to convert them to Type-0 MIDIs on the fly.</p>
+
+    <h2>2015-05-14: Added MT-32 backend</h2>
+    <p>Thanks to the amazing Munt MT-32 emulator. Uses the </p>
+
+    <h2>2015-05-03: Added GME core</h2>
+    <p>This provides support for NSF, SPC, VGM, and a lot of other formats.</p>
+
+    <h2>2015-01-02: Support for tracked modules</h2>
+    <p>Thanks to the libopenmpt.js from the Chiptune2.js project.</p>
+
+    <h2>2014-10-25: First version</h2>
+    <p>Includes MIDI core based on Timidity.</p>
+  </div>
+</aside>
+
+<aside id="page-about" class="overlay top">
+  <div>
+    <a href="#close" class="close" title="Close">Close</a>
+    <div class="content">
+    <h1>About Muki</h1>
+
+    <h2>What IS this sh**?</h2>
+    <p>Well, this sh** is actually called Muki. It's a web based player for sequenced music, that contains a carefully curated list of songs from video games of the 90's, and some even older. The sound you hear does not come from lossy compressed formats, by the way. Your browser is actually acting as a synthesizer and generating the waveforms from the original notation scores.</p>
+
+    <h2>How does it work?</h2>
+    <p>Muki uses web-based (Javascript) ports of different libraries that can play native formats for sequenced music such as MIDI or Nintendo music files, among many others. Keep reading if you want to know more.</p>
+
+    <h2>Who did this?</h2>
+    <p>The guy behind this is <a target="_blank" href="http://twitter.com/tomaspollak">Tomás Pollak</a>, a journalist-slash-developer-slash-aspiring musician who obviously spent too much time playing DOS games when he was young.</p>
+
+    <h2>Why did you build this?</h2>
+    <p>Because I love MIDI and I wanted to play some of my old songs to my newborn daughter. But it so happens that I use Linux, and it turns out that MIDI and Linux are not exactly, well, best friends. So one day an acorn hit me in the head and I realized the web offered all the tools I needed to build something in order to play them. Once I began the journey, I realized I could actually play a number of different formats besides MIDI. And that's how I got started.</p>
+
+    <h2>Is this actually legal?</h2>
+    <p>Yes, apparently there's nothing wrong with ripping music from old games nor sharing it, and letting people listen to them is just another form of distribution. If that wasn't the case, YouTube certainly wouldn't allow people to upload the ton of videos with game music that you can find on their site.</p>
+
+    <br />
+    <p>Regarding manually sequenced tunes, I've taken precaution in contacting some of the authors of these songs and asked for their permission. I haven't managed to contact eeeveryone, but the response has been overwhemingly positive so far. So thanks again guys!</p>
+
+    <br />
+    <p>That said, if there's anything you think should be removed, either because it's yours or because it's from someone who might get pissed, please let me know. I'll make sure to remove it in a snap.</p>
+
+    <h2>How did you build this? What technologies did you use?</h2>
+    <p>A whole bunch of them! The key piece of all is probably <a target="_blank" href="http://kripken.github.io/emscripten-site/">emscripten</a>, a transpiler that provides a way to port native C code to Javascript. Using emscripten I was able to build JS versions of the following libraries: <a href="http://libtimidity.sourceforge.net/" target="_blank">libTiMidity</a> (for MIDI playback, borrowing ideas from <a target="_blank" href="http://midijs.net">midijs.net</a>), <a href="https://github.com/munt/munt" target="_blank">Munt</a> (for Roland MT-32 emulation/playback), <a href="https://github.com/kode54/Game_Music_Emu" target="_blank">Game Music Emulator</a> (VGM/VGZ/NSF/SPC/etc), <a target="_blank" href="http://adplug.github.io/">AdPlug</a> and  <a target="_blank" href="http://bisqwit.iki.fi/source/adlmidi.html">AdlMidi</a> (for Adlib emulation) and <a  target="_blank" href="https://gitlab.kode54.net/kode54/Highly_Experimental/tree/master/Core">Highly  Experimental</a> (PSF/PSF2). The only one I didn't actually build was the JS port of libopenmpt, which I borrowed from the <a target="_blank" href="https://github.com/deskjet/chiptune2.js">chiptune2.js</a> project.  The real challenge was to glue everything together, ensuring there were no memleaks, and of course, selecting the list of songs.</p>
+
+    <h2>What about the UI?</h2>
+    <p>Oh yes, the UI. You like it? Also a LOT of code-stiching. The 3D navigation was taken from one of the cool examples from Codrops. The intro script uses the <a target="_blank" href="https://github.com/mattboldt/typed.js/">typed.js</a> library as well as one called <a target="_blank" href="https://github.com/rocketwagon/jquery-starfield/">starfield.js</a>.
+
+    <br /><br />As for the audio visualizations, the first one (Bubbles) is a customized version of a Codepen snippet I found long ago. <strong>Lights</strong> is a (very lightly) modified version of Github user @soulwire's <a target="_blank" href="https://github.com/soulwire/Plasmatic-Isosurface">Plasmatic Isosurface</a>, and <strong>Hills</strong> is based on an example from Google, as shown in the <a target="_blank" href="https://chromium.googlecode.com/svn/trunk/samples/audio/index.html">Web Audio demos</a> page.
+    </p>
+
+    <h2>And what about the music?</h2>
+    <p>Well, so the music is a collection of different files of different formats that hail from
+different sources. Probably the most important one is the great, the amazing <a target="_blank"
+href="http://mirsoft.info">World of Game Music</a>, a website that contains a huge database of game
+music in both MIDI (rips and arranged tracks) and MOD format. Then there's <a target="_blank"
+href="http://www.vgmusic.com">VGMusic</a>, another great site that contains a nice collection
+of MIDIs that have been sequenced by its own (and very talented) community.</p>
+
+    <br />
+    <p>Another key source is <a target="_blank" href="http://http://www.zophar.net">Zophar's Domain</a>, that contains ripped soundtracks from console games (NES, SNES, Sega, PSX, etc). Music from Sierra games comes from the legendary guys at <a target="_blank" href="http://queststudios.com">QuestStudios</a>. Finally there's <a target="_blank" href="http://vgmrips.net">VGMRips</a>, a recent (and surprisingly good) discovery that holds an ever-growing database of VGM music. Everything else was ripped and tweaked personally by me either using an extractor tool or through DOSBox, like the Might and Magic 3 music or the intro song from HeroQuest. You gotta listen to those!</p>
+
+    <br />
+    <p>By the way, if you click over the name of the song that's playing, a window will pop up showing the source where the file was downloaded from, as well as the name of the company that holds the rights for the tune. I was able to get that information from <a target="_blank" href="http://thegamesdb.net">TheGamesDB</a> (via API) or <a target="_blank" href="http://www.mobygames.com">MobyGames</a> (by hand!).</p>
+
+    <h2>Looks like you've put a lot of time into this...</h2>
+    <p>You bet your boots I have! It's been a lot of fun, though. I hope you enjoy listening to Muki as much as I enjoyed building it.</p>
+
+    <h2>What bank does the Soundfont-based MIDI synth use?</h2>
+    <p>It actually uses a combination of different soundfonts, aiming to balance the highest possible sound quality with the lowest possible file size. Most of the patches come from the great <a href="http://www.arachnosoft.com/main/soundfont.php" target="_blank">Arachno soundfont</a>, though.</p>
+
+    <h2>I'm having trouble using Muki.</h2>
+    <p>Rats. Did you check out the <a href="./pages/help">troubleshooting section</a>? If you think you might have spotted a bug, <a href="./pages/bugs">please let me know</a>.</p>
+
+    <h2>Can I submit a new song?</h2>
+    <p>But of course you can! Just shoot me <a href="./cdn-cgi/l/email-protection#04706b696577746b6868656f446369656d682a676b693b7771666e6167703949716f6d2f576b6a63">an email</a> and I'll be happy to add it, as long as it's a good rip and it's not already in the Muki database.</p>
+
+    <h2>Where's the code?</h2>
+    <p>I thought you'd ask. I'd like to make the player code available but it's an ugly mess as it is right now, so I need to do some housekeeping before I push anything up. It should be available soon on my <a target="_blank" href="http://github.com/tomas">Github account</a>.</p>
+
+    
+
+    <h2>Can I use something from Muki on my site/project/etc?</h2>
+    <p>Sure, help yourself. Remember though that most of the songs aren't mine, so I'm not the one to ask for permission.</a>
+
+    <h2>What's the logo supposed to mean?</h2>
+    <p>It's an acorn. The magic acorn that hit me in the head.</p>
+
+    <h2>And what about the name?</h2>
+    <p>It's a long story. Here's the short version: it's what you get if you combine the words "music" and "midi", and divide them by "monkey". You can give it a try.</p>
+
+    <h2>Ok, I'm out of questions. Anything else?</h2>
+    <p>Yes! I'd like to thank everyone who directly on indirectly helped in making this possible. Kudos to the libTiMidity developers, to the people that made Munt possible (way to go guys!), to the OpenMPT, the Highly Experimental and the Chiptune2.js projects, and to Kode54 for his great work on GME and the nifty trick he pulled on Munt (Super mode). And last but not least, I should thank everyone in the game music community that has contributed their rips, their tweaks and their arrangements to the sites I mentioned above. Thanks for making this possible, and for helping keep sequenced music alive.</p>
+    </div>
+  </div>
+</aside>
+
+<aside id="page-help" class="overlay top">
+  <div>
+    <a href="#close" class="close" title="Close">Close</a>
+    <div class="content">
+    <h1>Help &amp; FAQ</h1>
+
+    <h2>Can I play my own songs in Muki?</h2>
+    <p>Sure you can. Just drag and drop 'em inside the browser window. Voilá!</p>
+
+    <h2>And what formats are supported?</h2>
+    <p>All of the following: .mid, .mod, .xm, .it, .s3m, .psm, .amf, .ay, .gbs, .gym, .hes, .kss, .nsf, .sap, .spc, .vgm and .vgz. Those, and .dro, .imf, .raw, .laa, .cmf and the rest of the Adlib-based formats supported by <a target="_blank" href="http://adplug.github.io/">AdPlug</a>. You can drop one or a whole list of files and Muki will play them in order.</p>
+
+    <h2>Some of the visualizations don't work.</h2>
+    <p>They don't because they need WebGL to be enabled in your browser. Safari seems to disable it by default, but you can turn it easily on from the (hidden) Developer menu. To unhide it, click the box at the bottom in the Advanced tab in Safari's Preferences.</p>
+
+    <h2>This thing uses too much of my precious CPU!</h2>
+    <p>That's because Muki renders all of the sounds in real time in your browser, which does require some bit of muscle for doing all the math. However, what might be hogging your CPU isn't the synthesis itself but the audio visualizations. This is usually the case if your browser isn't using GPU hardware acceleration (which you can enable).</p>
+
+    <h2>Enable GPU acceleration? How's that?</h2>
+    <p>If you're using Chrome, you can check if the browser is using hardware acceleration by opening <strong>chrome://gpu</strong> in a tab. It should say "hardware accelerated" in green, next to Canvas (at the top of the list) and WebGL (at the bottom). If it doesn't, it means something's wrong. Updating Chrome might help. In my case I was able to fix it by enabling the "override software rendering list" option at the top of the <strong>chrome://flags</strong> page. Your mileage may vary, though.</p>
+
+    <h2>I'm too lazy. Can I change or simply turn off the visualization?</h2>
+    <p>Of course. You can do it from the settings pane, by clicking the icon at the bottom or from the More menu. You can also use the <strong>V</strong> key to cycle between the different options.</p>
+
+    <h2>What other key bindings are available?</h2>
+    <p>The Tab key opens the sidepane (playlist), the slash (/) or <strong>S</strong> key shows the search bar, and the left and right arrows let you skip tracks. Use the spacebar to pause/unpause playback.</p>
+
+    <h2>Why do some MIDIs take so long to load?</h2>
+    <p>
+      That's because you're using the Soundfont-based MIDI synth for playing those tunes, which requires each instrument patch to be preloaded for the music to play (and some songs use a LOT of them). Patches are cached once downloaded, so as you listen to more songs it'll only get faster.
+
+      <br /><br />
+      By the way, you can always switch to one of the other MIDI synths that don't rely on PCM patches, such the Adlib FM one.
+    </p>
+
+    <h2>How do I switch the MIDI synth?</h2>
+    <p>From the settings pane. Open it from the More menu or by clicking the settings icon below.</p>
+
+    <h2>I'm curious. How can Muki play GM midis with the MT-32 synth? Isn't the MT-32 supposed to be pre-GM?</h2>
+    <p>That's right. However, Muki uses the awesome Munt emulator which includes a GM mode (a.k.a. Super Munt) that allows playing regular midis, and only uses Munt in non-GM mode for real MT-32 MIDIs.</p>
+
+    <h2>Cool, but how do I make my MIDI file to be played with the (real, non-GM) MT-32 synth?</h2>
+    <p>Good question. If Muki detects a MT-32-specific sysex message, then it will forward it to the MT-32 core in non-GM mode. If your song doesn't contain any Sysex messages you can force MT-32 playback by renaming the song's file extension from .mid to .mt32.mid. It's a convention Muki uses internally.</p>
+
+    <h2>The thing is I *have* the sysex, but on a separate file.</h2>
+    <p>Oh, I see. Unfortunately Muki doesn't handle that case... yet. :)</p>
+
+    </div><!-- /content -->
+  </div>
+</aside>
+
+<aside id="page-settings" class="overlay">
+  <div>
+    <a href="#close" class="close" title="Close">Close</a>
+    <div class="content">
+     <h2>Muki Settings</h2>
+
+        <form action="?" method="get">
+        <p class="clearfix">
+          <span class="left">
+            <label for="settings-midi-synth">GM MIDI synth</label>
+          </span>
+
+          <span>
+            <select id="settings-midi-synth" name="midi">
+              <option value="adlib">Adlib (Yamaha FM)</option>
+              <option value="mt32">MT-32 (Roland LA)</option>
+              <option value="soundfont">Soundfont-based</option>
+              <option value="chiptune">Chiptune-like (beta)</option>
+              
+            </select>
+          </span>
+        </p>
+        </form>
+<!----- 
+        <p class="clearfix" style="display:">
+          <span class="left">
+            <label for="settings-force-mt32">Force MT-32 MIDI</label>
+          </span>
+
+          <span>
+          <input type="checkbox" id="settings-force-mt32" name="force-mt32" />
+          </span>
+        </p>
+ -->
+        <p class="clearfix">
+
+          <span class="left">
+            <label for="settings-visualization">Visualization mode</label>
+          </span>
+
+          <span>
+            <select id="settings-visualization" name="settings-visualization">
+              <option value="none">None</option>
+              <option value="Circles">Bouncing Bubbles</option>
+              <option value="Lights">Plasma Lights (beta)</option>
+              <option value="Hills">Sonogram Hills (beta)</option>
+              <!--<option value="Wobble">Wobble</option>-->
+            </select>
+          </span>
+        </p>
+
+<!--
+        <p class="clearfix">
+          <span class="left">
+            <label for="settings-sort-mode">Sorting mode for playlists</label>
+          </span>
+
+          <span>
+            <select id="settings-sort-mode" name="settings-sort-mode">
+              <option value="random">Random</option>
+              <option value="alphabetically">Alphabetically</option>
+              <option value="rating">By rating</option>
+            </select>
+          </span>
+        </p>
+-->
+
+        <p class="clearfix">
+          <span class="left">
+            <label for="settings-compressor">Enable Dynamics Compressor</label>
+          </span>
+
+          <span>
+          <input type="checkbox" id="settings-compressor" name="enable-compressor" />
+          </span>
+        </p>
+
+<!--
+        <p class="clearfix">
+          <span class="left">
+            <label for="desktop-notifications">Allow Desktop Notifications</label>
+          </span>
+          <span>
+            <input type="checkbox" id="desktop-notifications" name="desktop-notifications" />
+          </span>
+        </p>
+-->
+
+      </form>
+    </div>
+  </div>
+</aside>
+
+<aside id="page-song-details" class="overlay bottom">
+  <div>
+    <a href="#close" class="close" title="Close">Close</a>
+    <div class="content">
+    </div>
+  </div>
+</aside>
+</body>
+  <script>
+  var buffFile=[];
+  function getFiles(){ 
+    // love the query selector
+    var fileInput = document.querySelector("#IdInputFiles");
+    var files = fileInput.files;
+    var fl=files.length;
+    var i=0;
+
+    while ( i < fl) {
+        buffFile[i]=files[i];
+        i++;
+    }
+    
+    return Oe.n(buffFile);
+    
+    if (buffFile.types && "function" == typeof buffFile.types.filter) {
+      var o = Object.keys(g),
+        a = buffFile.types.filter(function (e) {
+          return -1 != o.indexOf(e) || -1 != o.indexOf("*")
+        }).map(function (e) {
+          return {
+            type: e,
+            data: buffFile.getData(e)
+          }
+        });
+      n(a)
+    }
+  };
+  document.querySelector("#IdInputFiles").onchange=getFiles;
+
+  function getDirs(){ 
+    var fileInput = document.querySelector("#IdInputDirs");
+    var files = fileInput.files;
+    var fl=files.length;
+    var i=0;
+
+    while ( i < fl) {
+        buffFile[i]=files[i];
+        i++;
+        
+    }
+    return Oe.n(buffFile);
+
+    if (buffFile.types && "function" == typeof buffFile.types.filter) {
+      var o = Object.keys(g),
+        a = buffFile.types.filter(function (e) {
+          return -1 != o.indexOf(e) || -1 != o.indexOf("*")
+        }).map(function (e) {
+          return {
+            type: e,
+            data: buffFile.getData(e)
+          }
+        });
+      n(a)
+    }
+ 
+  }; 
+  
+document.querySelector("#IdInputDirs").onchange=getDirs;
+
+function shuffle(){
+  var pt = document.getElementById('songlist');
+  //fisher yates shuffle. hopefully.
+  for(var i = document.querySelectorAll("#songlist li"), l = i.length;  l--;){
+    var j = Math.floor(Math.random() * l);
+    var jel = i[j], 
+        iel = i[l];
+    var jref = jel.nextSibling, 
+        iref = iel.nextSibling;
+    pt.insertBefore(jel, iref);
+    pt.insertBefore(iel, jref);
+  }
+};
+function empty(){
+  var pt = document.getElementById('songlist');
+  pt.innerHTML = '';
+
+};
+function NamaFile(url) {
+  var r = url.split("/");
+  return f = r[r.length - 1].toLowerCase();
+}
+    
+  
+  </script>
+
+</html>
