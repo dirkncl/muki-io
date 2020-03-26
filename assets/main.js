@@ -1,5 +1,3 @@
-function ctxAudio(){return new AudioContext};
-var CtxAudio;
 function e(url,t,n){
   if("function"==typeof t)
     var n=t,
@@ -193,6 +191,7 @@ function l(){
   }
   z.length&&setTimeout(l,5)
 };
+
 function c(e){
   var t=e.createGain(),
       n=t._dry=e.createGain(),
@@ -225,6 +224,7 @@ function f(e,t,n){
     new DataView(e.buffer,e.byteOffset+t,n)
   )
 };
+
 function h(e,t,n,r){
   var i=0;
   if("undefined"==typeof r&&(r=e.byteLength-t),n)
@@ -249,6 +249,7 @@ function d(e,t){
     byteLength:r
   }
 };
+
 function p(e,t,n){
   if("function"==typeof t)
     var n=t,
@@ -280,6 +281,7 @@ function p(e,t,n){
     i
   )
 };
+
 var m=function(e,t,n){
   var r=this;
   this.onchange=null,
@@ -291,7 +293,9 @@ var m=function(e,t,n){
   this.curY=0,
   t&&(this.canvas_=t),
   n&&(this.context_=n),
-  e.onmousedown=function(e){r.curX=e.clientX,r.curY=e.clientY;var t=!1;if(r.canvas_&&r.context_){var n=r.canvas_.getBoundingClientRect(),i=e.pageX-n.left,o=e.pageY-n.top,a=r.canvas_.width,s=r.canvas_.height;if(i>0&&a>i&&o>0&&s>o){var u=r.context_.readPixels(i,s-o,1,1,r.context_.RGBA,r.context_.UNSIGNED_BYTE);u&&u[3]>25.5&&(t=!0)}}else t=!0;r.dragging=t},
+  e.onmousedown=function(e){
+    r.curX=e.clientX,r.curY=e.clientY;var t=!1;if(r.canvas_&&r.context_){var n=r.canvas_.getBoundingClientRect(),i=e.pageX-n.left,o=e.pageY-n.top,a=r.canvas_.width,s=r.canvas_.height;if(i>0&&a>i&&o>0&&s>o){var u=r.context_.readPixels(i,s-o,1,1,r.context_.RGBA,r.context_.UNSIGNED_BYTE);u&&u[3]>25.5&&(t=!0)}}else t=!0;r.dragging=t
+  },
   e.onmouseup=function(e){r.dragging=!1},
   e.onmousemove=function(e){if(r.dragging){var t=e.clientX,n=e.clientY,i=(r.curX-t)/r.scaleFactor,o=(r.curY-n)/r.scaleFactor;r.curX=t,r.curY=n,r.yRot=(r.yRot+i)%360,r.xRot=r.xRot+o,r.xRot<-90?r.xRot=-90:r.xRot>90&&(r.xRot=90),null!=r.onchange&&r.onchange(r.xRot,r.yRot)}}
 };
@@ -556,12 +560,65 @@ a.AllPassFilter=function(e,t,n){var r=this;r.sampleRate=e,r.buffer=new Float32Ar
 a.AllPassFilter.prototype={sample:0,index:0,feedback:.5,pushSample:function(e){var t=this;return bufOut=t.buffer[t.index],t.sample=-e+bufOut,t.buffer[t.index++]=e+bufOut*t.feedback,t.index>=t.bufferSize&&(t.index=0),t.sample},getMix:function(){return this.sample},reset:function(){this.index=0,this.sample=0,this.buffer=new Float32Array(this.bufferSize)}};
 //"object"==typeof module&&"object"==typeof module.exports&&(module.exports=a),
 
-function s(e,t,n,r,i){this.fromSampleRate=e,this.toSampleRate=t,this.channels=0|n,this.outputBufferSize=r,this.noReturn=!!i,this.initialize()};
-s.prototype.initialize=function(){if(!(this.fromSampleRate>0&&this.toSampleRate>0&&this.channels>0))throw new Error("Invalid settings specified for the resampler.");this.fromSampleRate==this.toSampleRate?(this.resampler=this.bypassResampler,this.ratioWeight=1):(this.ratioWeight=this.fromSampleRate/this.toSampleRate,this.fromSampleRate<this.toSampleRate?(this.compileLinearInterpolationFunction(),this.lastWeight=1):(this.compileMultiTapFunction(),this.tailExists=!1,this.lastWeight=0),this.initializeBuffers())},
-s.prototype.compileLinearInterpolationFunction=function(){for(var e="var bufferLength = buffer.length;  var outLength = this.outputBufferSize;  if ((bufferLength % "+this.channels+") == 0) {    if (bufferLength > 0) {      var weight = this.lastWeight;      var firstWeight = 0;      var secondWeight = 0;      var sourceOffset = 0;      var outputOffset = 0;      var outputBuffer = this.outputBuffer;      for (; weight < 1; weight += "+this.ratioWeight+") {        secondWeight = weight % 1;        firstWeight = 1 - secondWeight;",t=0;t<this.channels;++t)e+="outputBuffer[outputOffset++] = (this.lastOutput["+t+"] * firstWeight) + (buffer["+t+"] * secondWeight);";e+="}      weight -= 1;      for (bufferLength -= "+this.channels+", sourceOffset = Math.floor(weight) * "+this.channels+"; outputOffset < outLength && sourceOffset < bufferLength;) {        secondWeight = weight % 1;        firstWeight = 1 - secondWeight;";for(var t=0;t<this.channels;++t)e+="outputBuffer[outputOffset++] = (buffer[sourceOffset"+(t>0?" + "+t:"")+"] * firstWeight) + (buffer[sourceOffset + "+(this.channels+t)+"] * secondWeight);";e+="weight += "+this.ratioWeight+";        sourceOffset = Math.floor(weight) * "+this.channels+";      }";for(var t=0;t<this.channels;++t)e+="this.lastOutput["+t+"] = buffer[sourceOffset++];";e+='this.lastWeight = weight % 1;      return this.bufferSlice(outputOffset);    }    else {      return (this.noReturn) ? 0 : [];    }  }  else {    throw(new Error("Buffer was of incorrect sample length."));  }',this.resampler=Function("buffer",e)},
-s.prototype.compileMultiTapFunction=function(){for(var e="var bufferLength = buffer.length;  var outLength = this.outputBufferSize;  if ((bufferLength % "+this.channels+") == 0) {    if (bufferLength > 0) {      var weight = 0;",t=0;t<this.channels;++t)e+="var output"+t+" = 0;";for(e+="var actualPosition = 0;      var amountToNext = 0;      var alreadyProcessedTail = !this.tailExists;      this.tailExists = false;      var outputBuffer = this.outputBuffer;      var outputOffset = 0;      var currentPosition = 0;      do {        if (alreadyProcessedTail) {          weight = "+this.ratioWeight+";",t=0;t<this.channels;++t)e+="output"+t+" = 0;";for(e+="}        else {          weight = this.lastWeight;",t=0;t<this.channels;++t)e+="output"+t+" = this.lastOutput["+t+"];";for(e+="alreadyProcessedTail = true;        }        while (weight > 0 && actualPosition < bufferLength) {          amountToNext = 1 + actualPosition - currentPosition;          if (weight >= amountToNext) {",t=0;t<this.channels;++t)e+="output"+t+" += buffer[actualPosition++] * amountToNext;";for(e+="currentPosition = actualPosition;            weight -= amountToNext;          }          else {",t=0;t<this.channels;++t)e+="output"+t+" += buffer[actualPosition"+(t>0?" + "+t:"")+"] * weight;";for(e+="currentPosition += weight;            weight = 0;            break;          }        }        if (weight <= 0) {",t=0;t<this.channels;++t)e+="outputBuffer[outputOffset++] = output"+t+" / "+this.ratioWeight+";";for(e+="}        else {          this.lastWeight = weight;",t=0;t<this.channels;++t)e+="this.lastOutput["+t+"] = output"+t+";";e+='this.tailExists = true;          break;        }      } while (actualPosition < bufferLength && outputOffset < outLength);      return this.bufferSlice(outputOffset);    }    else {      return (this.noReturn) ? 0 : [];    }  }  else {    throw(new Error("Buffer was of incorrect sample length."));  }',this.resampler=Function("buffer",e)},
-s.prototype.bypassResampler=function(e){return this.noReturn?(this.outputBuffer=e,e.length):e},
-s.prototype.bufferSlice=function(e){if(this.noReturn)return e;try{return this.outputBuffer.subarray(0,e)}catch(t){try{return this.outputBuffer.length=e,this.outputBuffer}catch(t){return this.outputBuffer.slice(0,e)}}},
+function s(e,t,n,r,i){
+  this.fromSampleRate=e,
+  this.toSampleRate=t,
+  this.channels=0|n,
+  this.outputBufferSize=r,
+  this.noReturn=!!i,
+  this.initialize()
+};
+s.prototype.initialize=function(){
+  if(!(this.fromSampleRate>0&&this.toSampleRate>0&&this.channels>0))
+    throw new Error("Invalid settings specified for the resampler.");
+  this.fromSampleRate==this.toSampleRate?
+    (
+      this.resampler=this.bypassResampler,
+      this.ratioWeight=1
+    )
+  :
+    (
+      this.ratioWeight=this.fromSampleRate/this.toSampleRate,
+      this.fromSampleRate<this.toSampleRate?(this.compileLinearInterpolationFunction(),this.lastWeight=1):(this.compileMultiTapFunction(),this.tailExists=!1,this.lastWeight=0),this.initializeBuffers()
+    )
+},
+s.prototype.compileLinearInterpolationFunction=function(){
+  for(var e="var bufferLength = buffer.length;  var outLength = this.outputBufferSize;  if ((bufferLength % "+this.channels+") == 0) {    if (bufferLength > 0) {      var weight = this.lastWeight;      var firstWeight = 0;      var secondWeight = 0;      var sourceOffset = 0;      var outputOffset = 0;      var outputBuffer = this.outputBuffer;      for (; weight < 1; weight += "+this.ratioWeight+") {        secondWeight = weight % 1;        firstWeight = 1 - secondWeight;",t=0;t<this.channels;++t)
+    e+="outputBuffer[outputOffset++] = (this.lastOutput["+t+"] * firstWeight) + (buffer["+t+"] * secondWeight);";
+  e+="}      weight -= 1;      for (bufferLength -= "+this.channels+", sourceOffset = Math.floor(weight) * "+this.channels+"; outputOffset < outLength && sourceOffset < bufferLength;) {        secondWeight = weight % 1;        firstWeight = 1 - secondWeight;";
+  for(var t=0;t<this.channels;++t)
+    e+="outputBuffer[outputOffset++] = (buffer[sourceOffset"+(t>0?" + "+t:"")+"] * firstWeight) + (buffer[sourceOffset + "+(this.channels+t)+"] * secondWeight);";
+  e+="weight += "+this.ratioWeight+";        sourceOffset = Math.floor(weight) * "+this.channels+";      }";
+  for(var t=0;t<this.channels;++t)
+    e+="this.lastOutput["+t+"] = buffer[sourceOffset++];";e+='this.lastWeight = weight % 1;      return this.bufferSlice(outputOffset);    }    else {      return (this.noReturn) ? 0 : [];    }  }  else {    throw(new Error("Buffer was of incorrect sample length."));  }',
+  this.resampler=Function("buffer",e)
+},
+s.prototype.compileMultiTapFunction=function(){
+  for(var e="var bufferLength = buffer.length;  var outLength = this.outputBufferSize;  if ((bufferLength % "+this.channels+") == 0) {    if (bufferLength > 0) {      var weight = 0;",t=0;t<this.channels;++t)
+    e+="var output"+t+" = 0;";
+  for(e+="var actualPosition = 0;      var amountToNext = 0;      var alreadyProcessedTail = !this.tailExists;      this.tailExists = false;      var outputBuffer = this.outputBuffer;      var outputOffset = 0;      var currentPosition = 0;      do {        if (alreadyProcessedTail) {          weight = "+this.ratioWeight+";",t=0;t<this.channels;++t)
+    e+="output"+t+" = 0;";
+  for(e+="}        else {          weight = this.lastWeight;",t=0;t<this.channels;++t)
+    e+="output"+t+" = this.lastOutput["+t+"];";
+  for(e+="alreadyProcessedTail = true;        }        while (weight > 0 && actualPosition < bufferLength) {          amountToNext = 1 + actualPosition - currentPosition;          if (weight >= amountToNext) {",t=0;t<this.channels;++t)
+    e+="output"+t+" += buffer[actualPosition++] * amountToNext;";
+  for(e+="currentPosition = actualPosition;            weight -= amountToNext;          }          else {",t=0;t<this.channels;++t)
+    e+="output"+t+" += buffer[actualPosition"+(t>0?" + "+t:"")+"] * weight;";
+  for(e+="currentPosition += weight;            weight = 0;            break;          }        }        if (weight <= 0) {",t=0;t<this.channels;++t)
+    e+="outputBuffer[outputOffset++] = output"+t+" / "+this.ratioWeight+";";
+  for(e+="}        else {          this.lastWeight = weight;",t=0;t<this.channels;++t)
+    e+="this.lastOutput["+t+"] = output"+t+";";
+  e+='this.tailExists = true;          break;        }      } while (actualPosition < bufferLength && outputOffset < outLength);      return this.bufferSlice(outputOffset);    }    else {      return (this.noReturn) ? 0 : [];    }  }  else {    throw(new Error("Buffer was of incorrect sample length."));  }',
+  this.resampler=Function("buffer",e)
+},
+s.prototype.bypassResampler=function(e){
+  return this.noReturn?(this.outputBuffer=e,e.length):e
+},
+s.prototype.bufferSlice=function(e){
+  if(this.noReturn)return e;
+  try{return this.outputBuffer.subarray(0,e)}
+  catch(t){try{return this.outputBuffer.length=e,this.outputBuffer}catch(t){return this.outputBuffer.slice(0,e)}}
+},
 s.prototype.initializeBuffers=function(){try{this.outputBuffer=new Float32Array(this.outputBufferSize),this.lastOutput=new Float32Array(this.channels)}catch(e){this.outputBuffer=[],this.lastOutput=[]}};//,
 
 /////////////////////////////////
@@ -1024,9 +1081,6 @@ He.looping=!1,
 He.log=function(e){console.log("[Player] "+e)},
 
 He.init=function(e){
-  /////// /*****************/ //////////
-  CtxAudio=ctxAudio();
-  /////// /*****************/ //////////
   this.backends={}
 },
 
@@ -1056,6 +1110,7 @@ He.setPlaylist=function(e){
 },
 He.getSong=function(){
   this.stop(),
+
   He.trigger("loading"),
   this.playlist.feed(function(e,t){
     return e?
@@ -1107,7 +1162,10 @@ He.playing=function(e,t,n){Xe.toggle(!0),Xe.setActive("play");var r=e?"resumed":
 He.stopped=function(e){Xe.setActive("stop"),e||Xe.setProgress(0);var t=e?"paused":"stopped";He.trigger(t)},
 He.playlist_finished=function(){He.looping?He.restart():(He.trigger("finished"),He.stopped())},
 He.restart=function(){return He.playlist?(He.playlist.index=0,Xe.setPlaying(He.playlist.index),void He.play()):console.log("No playlist set. Cannot restart")},
-He.play=function(){return He.playlist?void this.getSong():console.log("No playlist set. Cannot play.")},
+He.play=function(){
+  CtxAudio.resume();
+  return He.playlist?void this.getSong():console.log("No playlist set. Cannot play.")
+},
 He.stop=function(){this.current_backend&&(this.current_backend.stop(),this.current_song=null),lyricsDisplayer.stop()},
 He.prev=function(){if(!He.playlist)return console.log("No playlist set. Cannot skip to prev.");if(He.current_backend&&He.current_backend.prev_track&&He.current_backend.prev_track())return He.log("Skipped to prev track in multitrack song.");if(!(He.playlist.index<=0)){var e=He.playlist.prev();Xe.setPlaying(e),He.getSong()}},
 He.next=function(){if(!He.playlist)return console.log("No playlist set. Cannot skip to next.");if(He.current_backend&&He.current_backend.next_track&&He.current_backend.next_track())return He.log("Skipped to next track in multitrack song.");var e=He.playlist.next();e>=0&&(Xe.setPlaying(e),He.getSong()),lyricsDisplayer.next()},
@@ -1115,15 +1173,25 @@ He.pause=function(){this.current_backend&&this.current_backend.pause()},
 He.resume=function(){this.current_backend&&this.current_backend.resume()},
 He.skipTo=function(e){var t=He.playlist,n=parseInt(e);t&&t.index!=n&&(t.set(n),Xe.setPlaying(n),He.getSong())},
 He.backendStatus=function(){return this.current_backend?this.current_backend.status():void 0},
-He.playPause=function(){if(!this.current_backend)return this.log("No current backend."),this.play();var e=this.backendStatus();return"playing"==e?this.pause():"paused"==e?this.resume():"stopped"==e?this.play():void this.log("Cannot play/pause, backend is "+e)},
+
+He.playPause=function(){
+  if(!this.current_backend)return this.log("No current backend."),this.play();
+  var e=this.backendStatus();
+  return"playing"==e?this.pause():"paused"==e?this.resume():"stopped"==e?this.play():void this.log("Cannot play/pause, backend is "+e)
+},
 n(He);
 
-//var Main=He;
+var Main=He;
 var qe=function(){//volumeControl
-  function e(e,t){var e="[Output] "+e;return arguments[0]=e,console.log.apply(console,arguments)}
+  function e(e,t){
+    var e="[Output] "+e;return arguments[0]=e,console.log.apply(console,arguments)
+  }
   function t(){var e=Object.keys(p),t=e[e.length-1];return p[t]}
   function n(e,n){t().connect(n),p[e]=n}
-  function r(e){f=e;var r=k.get("volume");if(h=r?parseFloat(r):y,d=p.gain=f.createGain(),p.gain.gain.value=h,m){var a=f.createAnalyser();a.smoothingTimeConstant=.2,a.fftSize=2048,n("analyser_before",a)}if(g){var s=f.createDynamicsCompressor();n("compressor",s)}if(m){var a=f.createAnalyser();a.smoothingTimeConstant=.2,a.fftSize=2048,n("analyser_after",a),setInterval(i,200)}return t().connect(f.destination),d.receive=o,d}
+  function r(e){
+    f=e;
+    var r=k.get("volume");if(h=r?parseFloat(r):y,d=p.gain=f.createGain(),p.gain.gain.value=h,m){var a=f.createAnalyser();a.smoothingTimeConstant=.2,a.fftSize=2048,n("analyser_before",a)}if(g){var s=f.createDynamicsCompressor();n("compressor",s)}if(m){var a=f.createAnalyser();a.smoothingTimeConstant=.2,a.fftSize=2048,n("analyser_after",a),setInterval(i,200)}return t().connect(f.destination),d.receive=o,d
+  }
   function i(t){var n=new Uint8Array(p.analyser_before.frequencyBinCount);p.analyser_before.getByteFrequencyData(n);var r=new Uint8Array(p.analyser_after.frequencyBinCount);p.analyser_after.getByteFrequencyData(r);for(var i=0,o=0,a=n.length,s=0;a>s;s++)i+=n[s],o+=r[s];var u=i/a,l=o/a;e("Average volume before / after -> difference ",u,l,u-l),e("Reduction: ",p.compressor.reduction.value.toFixed(2))}
   function o(e){e.connect(d)}
   function a(){if(p.compressor)e("Disabling DynamicsCompressor."),p.compressor.disconnect(),delete p.compressor,t().connect(f.destination);else{e("Enabling DynamicsCompressor.");var n=t();n.disconnect(),p.compressor=f.createDynamicsCompressor(),n.connect(p.compressor),p.compressor.connect(f.destination)}}
@@ -1437,10 +1505,7 @@ Je.resumeContext=function(e){
 Je.load_player=function(e){
   He.init();
   var t,
-      ////////// /***********************/ ////////////
-      //n=e||new AudioContext;
-      n=e||CtxAudio;
-      ////////// /***********************/ ////////////
+      n=CtxAudio=e||new AudioContext;
   try{
     t=qe.setup(n)
   }
@@ -1572,19 +1637,17 @@ var tt={},
     at=window.location.search.match(/index=(\d+)/);
 var lyricsDisplayer;       
 at&&(it=parseInt(at[1])),
+
 window.AudioContext=window.AudioContext||window.webkitAudioContext;
 
 $(function(){
 //////////////////////////////////////////////////////////////
   document.getElementById('lyricButton').style.display="none";
 /////////////////////////////////////////////////////////////  
-  function e(){Ge.render_logo(!1,function(){Ge.toggle_menu(!0),setTimeout(function(){$("#player").toggle(!0)},300)})
-    ////////// /***********************/ ////////////
-    CtxAudio=ctxAudio();
-    ////////// /***********************/ ////////////
-  
-  
+  function e(){
+    Ge.render_logo(!1,function(){Ge.toggle_menu(!0),setTimeout(function(){$("#player").toggle(!0)},300)})
   }
+  
 //////////////////////////////////////////////////////////////////////////////////  
   lyricsDisplayer=new MIDILyricsDisplayer(document.querySelector('div.lyrics'));
 //////////////////////////////////////////////////////////////////////////////////  
